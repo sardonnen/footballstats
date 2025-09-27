@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats - Application</title>
+    
+    <!-- CSS Modules -->
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/mobile.css">
+    <link rel="stylesheet" href="styles/live.css">
+    
+    <!-- JavaScript Modules -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/match.js"></script>
+    <script src="js/live.js"></script>
+    <script src="js/mobile.js"></script>
+    <script src="js/app.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h1>⚽ Football Stats</h1>
+        <div class="navigation">
+            <button class="btn" onclick="showPage('home')">🏠 Accueil</button>
+            <button class="btn" onclick="showPage('match')">⚽ Nouveau Match</button>
+            <button class="btn" onclick="showPage('live')">📺 Live</button>
+            <button class="btn" onclick="showPage('settings')">⚙️ Paramètres</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Page Accueil -->
+        <div id="home" class="page active">
+            <div class="welcome-card">
+                <h2>🏆 Tableau de Bord</h2>
+                <div class="quick-actions">
+                    <button class="btn btn-primary" onclick="startNewMatch()">
+                        ⚽ Commencer un nouveau match
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadSavedMatches()">
+                        📁 Charger un match sauvegardé
+                    </button>
+                </div>
+                <div id="savedMatches"></div>
+            </div>
+        </div>
+
+        <!-- Page Nouveau Match -->
+        <div id="match" class="page">
+            <div class="match-setup-card">
+                <h2>⚽ Configuration du Match</h2>
+                <div id="matchForm"></div>
+            </div>
+        </div>
+
+        <!-- Page Live -->
+        <div id="live" class="page">
+            <div class="live-container">
+                <div id="liveContent"></div>
+            </div>
+        </div>
+
+        <!-- Page Paramètres -->
+        <div id="settings" class="page">
+            <div class="settings-card">
+                <h2>⚙️ Paramètres</h2>
+                <div id="settingsForm"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notifications"></div>
+
+    <!-- Debug Mobile -->
+    <div id="mobileDebug" style="display: none;"></div>
+
+    <script>
+        // Initialisation de l'application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+    </script>
+</body>
+</html>
