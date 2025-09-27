@@ -9,16 +9,6 @@
     <link rel="stylesheet" href="styles/base.css">
     <link rel="stylesheet" href="styles/mobile.css">
     <link rel="stylesheet" href="styles/live.css">
-    
-    <!-- JavaScript Modules -->
-    <script src="js/config.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/storage.js"></script>
-    <script src="js/navigation.js"></script>
-    <script src="js/match.js"></script>
-    <script src="js/live.js"></script>
-    <script src="js/mobile.js"></script>
-    <script src="js/app.js"></script>
 </head>
 <body>
     <div class="header">
@@ -78,10 +68,161 @@
     <!-- Debug Mobile -->
     <div id="mobileDebug" style="display: none;"></div>
 
+    <!-- JavaScript Modules - ORDRE CRITIQUE pour éviter les erreurs de dépendances -->
     <script>
-        // Initialisation de l'application
+        // 1. Configuration d'abord
+    </script>
+    <script src="js/config.js"></script>
+    
+    <script>
+        // 2. Utilitaires ensuite
+    </script>
+    <script src="js/utils.js"></script>
+    
+    <script>
+        // 3. Après utils, on peut charger storage qui utilise Utils
+    </script>
+    <script src="js/storage.js"></script>
+    
+    <script>
+        // 4. Navigation qui peut utiliser storage et utils
+    </script>
+    <script src="js/navigation.js"></script>
+    
+    <script>
+        // 5. Modules fonctionnels qui utilisent tout ce qui précède
+    </script>
+    <script src="js/match.js"></script>
+    <script src="js/live.js"></script>
+    <script src="js/mobile.js"></script>
+    
+    <script>
+        // 6. App principal en dernier car il utilise tous les autres
+    </script>
+    <script src="js/app.js"></script>
+
+    <script>
+        // Vérification des dépendances avant initialisation
         document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
+            console.log('📋 Vérification des dépendances...');
+            
+            // Liste des dépendances critiques
+            const dependencies = [
+                'APP_CONFIG',
+                'Utils', 
+                'StorageManager',
+                'NavigationManager',
+                'MatchManager',
+                'LiveManager'
+            ];
+            
+            const missing = [];
+            dependencies.forEach(dep => {
+                if (typeof window[dep] === 'undefined') {
+                    missing.push(dep);
+                    console.error('❌ Dépendance manquante:', dep);
+                }
+            });
+            
+            if (missing.length > 0) {
+                // Afficher l'erreur à l'utilisateur
+                document.body.innerHTML = `
+                    <div style="
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: #e74c3c;
+                        color: white;
+                        padding: 30px;
+                        border-radius: 12px;
+                        text-align: center;
+                        font-family: sans-serif;
+                        max-width: 400px;
+                        z-index: 10000;
+                    ">
+                        <h2>❌ Erreur de chargement</h2>
+                        <p>Fichiers manquants ou mal organisés :</p>
+                        <ul style="text-align: left; margin: 15px 0;">
+                            ${missing.map(dep => `<li>${dep}</li>`).join('')}
+                        </ul>
+                        <p style="font-size: 14px; margin-top: 20px;">
+                            Vérifiez que tous les fichiers .js sont présents dans le dossier js/
+                        </p>
+                        <button onclick="location.reload()" style="
+                            background: white;
+                            color: #e74c3c;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 6px;
+                            margin-top: 15px;
+                            cursor: pointer;
+                            font-weight: bold;
+                        ">
+                            🔄 Recharger
+                        </button>
+                        <button onclick="window.open('check.html', '_blank')" style="
+                            background: #f39c12;
+                            color: white;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 6px;
+                            margin: 15px 5px 0 5px;
+                            cursor: pointer;
+                            font-weight: bold;
+                        ">
+                            🔍 Diagnostic
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            console.log('✅ Toutes les dépendances sont chargées');
+            console.log('🚀 Initialisation de l\'application...');
+            
+            // Initialiser l'application
+            try {
+                if (typeof FootballStatsApp !== 'undefined' && FootballStatsApp.initialize) {
+                    FootballStatsApp.initialize();
+                } else if (typeof initializeApp === 'function') {
+                    initializeApp();
+                } else {
+                    throw new Error('Fonction d\'initialisation non trouvée');
+                }
+            } catch (error) {
+                console.error('❌ Erreur d\'initialisation:', error);
+                document.body.innerHTML = `
+                    <div style="
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: #e74c3c;
+                        color: white;
+                        padding: 30px;
+                        border-radius: 12px;
+                        text-align: center;
+                        font-family: sans-serif;
+                        max-width: 400px;
+                    ">
+                        <h2>❌ Erreur d'initialisation</h2>
+                        <p>${error.message}</p>
+                        <button onclick="location.reload()" style="
+                            background: white;
+                            color: #e74c3c;
+                            border: none;
+                            padding: 10px 20px;
+                            border-radius: 6px;
+                            margin-top: 15px;
+                            cursor: pointer;
+                            font-weight: bold;
+                        ">
+                            🔄 Recharger
+                        </button>
+                    </div>
+                `;
+            }
         });
     </script>
 </body>
