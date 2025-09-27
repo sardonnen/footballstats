@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Stats - Application Complète</title>
+    <style>
+        /* Styles de base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: #fff;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        /* Navigation */
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        /* Boutons */
+        .btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            filter: brightness(1.1);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+        }
+        
+        /* Pages */
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Cards */
+        .welcome-card,
+        .match-setup-card,
+        .settings-card,
+        .live-container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            margin-bottom: 20px;
+            color: #fff;
+            text-align: center;
+            font-size: 1.8em;
+        }
+        
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #ecf0f1;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        /* Vue Live - Structure FIXE pour mobile */
+        .live-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .live-score {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .live-time {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .team-names {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        /* Structure tableau FIXE pour maintenir la layout mobile */
+        .live-match-table {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: separate;
+            border-spacing: 10px;
+            min-height: 400px;
+        }
+        
+        .live-table-row {
+            display: table-row;
+        }
+        
+        .live-table-cell {
+            display: table-cell;
+            vertical-align: top;
+            width: 33.33%;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .team-actions-column {
+            background: rgba(46, 204, 113, 0.1);
+            border-color: rgba(46, 204, 113, 0.3);
+        }
+        
+        .timeline-column {
+            background: rgba(52, 152, 219, 0.1);
+            border-color: rgba(52, 152, 219, 0.3);
+            text-align: center;
+        }
+        
+        .opponent-actions-column {
+            background: rgba(231, 76, 60, 0.1);
+            border-color: rgba(231, 76, 60, 0.3);
+        }
+        
+        .column-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            text-align: center;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Action buttons */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .action-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            min-height: 44px;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .action-btn.goal {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+        }
+        
+        .action-btn.assist {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+        }
+        
+        .action-btn.card {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+        }
+        
+        .action-btn.save {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+        }
+        
+        /* Timeline */
+        .timeline-events {
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .timeline-event {
+            background: rgba(255,255,255,0.1);
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            animation: slideInTimeline 0.3s ease-out;
+        }
+        
+        .timeline-event.goal {
+            border-left-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.1);
+        }
+        
+        @keyframes slideInTimeline {
+            from { 
+                opacity: 0; 
+                transform: translateY(-20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        
+        .event-time {
+            font-weight: bold;
+            color: #3498db;
+            margin-right: 10px;
+        }
+        
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 10000;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+        }
+        
+        .notification.error {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .navigation {
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 5px;
+            }
+            
+            .navigation .btn {
+                flex: 1;
+                padding: 10px 8px;
+                font-size: 12px;
+                min-width: auto;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .live-match-table {
+                border-spacing: 5px;
+                font-size: 14px;
+            }
+            
+            .live-table-cell {
+                padding: 10px;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .quick-actions .btn {
+                width: 100%;
+            }
+            
+            .team-names {
+                flex-direction: column;
+                gap: 5px;
+                font-size: 1em;
+            }
+            
+            .live-score {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>⚽ Football Stats</h1>
+        <div class="navigation">
+            <button class="btn" onclick="showPage('home')">🏠 Accueil</button>
+            <button class="btn" onclick="showPage('match')">⚽ Nouveau Match</button>
+            <button class="btn" onclick="showPage('live')">📺 Live</button>
+            <button class="btn" onclick="showPage('settings')">⚙️ Paramètres</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Page Accueil -->
+        <div id="home" class="page active">
+            <div class="welcome-card">
+                <h2>🏆 Tableau de Bord</h2>
+                <div class="quick-actions">
+                    <button class="btn btn-primary" onclick="startNewMatch()">
+                        ⚽ Commencer un nouveau match
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadSavedMatches()">
+                        📁 Charger un match sauvegardé
+                    </button>
+                </div>
+                <div id="savedMatches"></div>
+            </div>
+        </div>
+
+        <!-- Page Nouveau Match -->
+        <div id="match" class="page">
+            <div class="match-setup-card">
+                <h2>⚽ Configuration du Match</h2>
+                <div id="matchForm">
+                    <form id="newMatchForm" onsubmit="createNewMatch(event)">
+                        <div class="form-group">
+                            <label for="team1Name">Nom de votre équipe</label>
+                            <input type="text" id="team1Name" required placeholder="Entrez le nom de votre équipe" maxlength="30">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="team2Name">Nom de l'équipe adverse</label>
+                            <input type="text" id="team2Name" required placeholder="Entrez le nom de l'équipe adverse" maxlength="30">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="matchDuration">Durée du match (minutes)</label>
+                            <select id="matchDuration">
+                                <option value="45">45 minutes (une mi-temps)</option>
+                                <option value="90" selected>90 minutes (deux mi-temps)</option>
+                                <option value="120">120 minutes (avec prolongations)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="quick-actions">
+                            <button type="submit" class="btn btn-primary">
+                                ⚽ Créer le match
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="showPage('home')">
+                                ❌ Annuler
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Live -->
+        <div id="live" class="page">
+            <div class="live-container">
+                <div id="liveContent">
+                    <div style="text-align: center; padding: 50px;">
+                        <h2>⚠️ Aucun match en cours</h2>
+                        <p style="margin: 20px 0;">Créez un match pour accéder à la vue live.</p>
+                        <button class="btn btn-primary" onclick="showPage('match')">
+                            ⚽ Créer un nouveau match
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page Paramètres -->
+        <div id="settings" class="page">
+            <div class="settings-card">
+                <h2>⚙️ Paramètres</h2>
+                <div id="settingsForm">
+                    <p style="text-align: center; margin: 20px 0;">
+                        Paramètres disponibles dans la version complète.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notifications"></div>
+
+    <script>
+        // Variables globales
+        let currentMatch = null;
+        let stats = { team1: {}, team2: {} };
+        let events = [];
+        let players = [];
+        let currentTime = 0;
+        let isMatchRunning = false;
+        let matchTimer = null;
+        let currentPage = 'home';
+
+        // Configuration de base
+        const APP_CONFIG = {
+            name: 'Football Stats',
+            version: '2.0.0',
+            debug: true
+        };
+
+        // Utilitaires
+        const Utils = {
+            generateId: function() {
+                return Date.now().toString(36) + Math.random().toString(36).substr(2);
+            },
+            
+            formatMatchTime: function(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            },
+            
+            sanitizeString: function(str) {
+                if (typeof str !== 'string') return '';
+                return str.trim().replace(/[<>]/g, '');
+            }
+        };
+
+        // Gestionnaire de notifications
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Navigation
+        function showPage(pageId) {
+            // Masquer toutes les pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Afficher la page demandée
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                currentPage = pageId;
+                
+                if (pageId === 'home') {
+                    loadSavedMatches();
+                }
+            }
+        }
+
+        // Gestion des matchs
+        function createNewMatch(event) {
+            event.preventDefault();
+            
+            const team1Name = document.getElementById('team1Name').value.trim();
+            const team2Name = document.getElementById('team2Name').value.trim();
+            const duration = parseInt(document.getElementById('matchDuration').value);
+            
+            if (!team1Name || !team2Name) {
+                showNotification('Veuillez remplir tous les champs', 'error');
+                return;
+            }
+            
+            if (team1Name.toLowerCase() === team2Name.toLowerCase()) {
+                showNotification('Les noms d\'équipes doivent être différents', 'error');
+                return;
+            }
+            
+            // Créer le match
+            currentMatch = {
+                id: Utils.generateId(),
+                team1: { name: Utils.sanitizeString(team1Name) },
+                team2: { name: Utils.sanitizeString(team2Name) },
+                duration: duration,
+                score: { team1: 0, team2: 0 },
+                isLive: true,
+                startTime: Date.now()
+            };
+            
+            // Initialiser les données
+            stats = {
+                team1: { goals: 0, assists: 0, cards: 0 },
+                team2: { goals: 0, assists: 0, cards: 0 }
+            };
+            events = [];
+            currentTime = 0;
+            
+            showNotification('Match créé !', 'success');
+            startMatch();
+        }
+
+        function startMatch() {
+            if (!currentMatch) return;
+            
+            showLiveMatch();
+            showPage('live');
+            startTimer();
+            showNotification('Match lancé !', 'success');
+        }
+
+        function startTimer() {
+            isMatchRunning = true;
+            
+            if (matchTimer) {
+                clearInterval(matchTimer);
+            }
+            
+            matchTimer = setInterval(() => {
+                if (isMatchRunning) {
+                    currentTime++;
+                    updateTimerDisplay();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timerElement = document.getElementById('matchTimer');
+            if (timerElement) {
+                timerElement.textContent = Utils.formatMatchTime(currentTime);
+            }
+        }
+
+        function toggleMatch() {
+            isMatchRunning = !isMatchRunning;
+            const toggleButton = document.getElementById('toggleMatchButton');
+            if (toggleButton) {
+                toggleButton.textContent = isMatchRunning ? '⏸️ Pause' : '▶️ Reprendre';
+            }
+            showNotification(isMatchRunning ? 'Match repris' : 'Match en pause', 'success');
+        }
+
+        function endMatch() {
+            if (confirm('Êtes-vous sûr de vouloir terminer le match ?')) {
+                isMatchRunning = false;
+                if (matchTimer) {
+                    clearInterval(matchTimer);
+                    matchTimer = null;
+                }
+                showNotification('Match terminé !', 'success');
+                
+                // Afficher le résumé
+                showMatchSummary();
+            }
+        }
+
+        function showLiveMatch() {
+            if (!currentMatch) return;
+            
+            const liveContent = document.getElementById('liveContent');
+            liveContent.innerHTML = `
+                <div class="live-header">
+                    <div class="live-time">
+                        <span id="matchTimer">00:00</span>
+                    </div>
+                    
+                    <div class="team-names">
+                        <span class="team1-name">${currentMatch.team1.name}</span>
+                        <span class="live-score" id="liveScore">${currentMatch.score.team1} - ${currentMatch.score.team2}</span>
+                        <span class="team2-name">${currentMatch.team2.name}</span>
+                    </div>
+                    
+                    <div style="text-align: center; margin: 15px 0;">
+                        <button id="toggleMatchButton" class="btn btn-warning" onclick="toggleMatch()">
+                            ⏸️ Pause
+                        </button>
+                        <button class="btn btn-secondary" onclick="endMatch()">
+                            🏁 Terminer
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Structure tableau FIXE pour maintenir la disposition mobile -->
+                <div class="live-match-table">
+                    <div class="live-table-row">
+                        <!-- Colonne actions équipe 1 -->
+                        <div class="live-table-cell team-actions-column">
+                            <div class="column-title">🟢 ${currentMatch.team1.name}</div>
+                            <div class="action-buttons">
+                                <button class="action-btn goal" onclick="addEvent('team1', 'goal')">
+                                    ⚽ But
+                                </button>
+                                <button class="action-btn assist" onclick="addEvent('team1', 'assist')">
+                                    🎯 Passe D.
+                                </button>
+                                <button class="action-btn card" onclick="addEvent('team1', 'yellow_card')">
+                                    🟨 Carton J.
+                                </button>
+                                <button class="action-btn card" onclick="addEvent('team1', 'red_card')">
+                                    🟥 Carton R.
+                                </button>
+                            </div>
+                            <div style="text-align: center; margin-top: 15px;">
+                                <div>⚽ Buts: ${stats.team1.goals}</div>
+                                <div>🎯 Passes D.: ${stats.team1.assists}</div>
+                                <div>🟨 Cartons: ${stats.team1.cards}</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Colonne timeline centrale -->
+                        <div class="live-table-cell timeline-column">
+                            <div class="column-title">📈 Timeline</div>
+                            <div class="timeline-events" id="timelineEvents">
+                                ${events.length === 0 ? 
+                                    '<div style="text-align: center; padding: 40px; opacity: 0.7;">🕘 Aucun événement pour le moment</div>' : 
+                                    events.map(event => createEventHTML(event)).join('')
+                                }
+                            </div>
+                        </div>
+                        
+                        <!-- Colonne actions équipe 2 -->
+                        <div class="live-table-cell opponent-actions-column">
+                            <div class="column-title">🔴 ${currentMatch.team2.name}</div>
+                            <div class="action-buttons">
+                                <button class="action-btn goal" onclick="addEvent('team2', 'goal')">
+                                    ⚽ But
+                                </button>
+                                <button class="action-btn assist" onclick="addEvent('team2', 'assist')">
+                                    🎯 Passe D.
+                                </button>
+                                <button class="action-btn card" onclick="addEvent('team2', 'yellow_card')">
+                                    🟨 Carton J.
+                                </button>
+                                <button class="action-btn card" onclick="addEvent('team2', 'red_card')">
+                                    🟥 Carton R.
+                                </button>
+                            </div>
+                            <div style="text-align: center; margin-top: 15px;">
+                                <div>⚽ Buts: ${stats.team2.goals}</div>
+                                <div>🎯 Passes D.: ${stats.team2.assists}</div>
+                                <div>🟨 Cartons: ${stats.team2.cards}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addEvent(teamKey, eventType) {
+            if (!currentMatch) return;
+            
+            const event = {
+                id: Utils.generateId(),
+                type: eventType,
+                team: teamKey,
+                time: currentTime,
+                description: createEventDescription(eventType, teamKey)
+            };
+            
+            // Ajouter l'événement
+            events.unshift(event);
+            
+            // Mettre à jour les statistiques
+            updateStats(teamKey, eventType);
+            
+            // Mettre à jour l'affichage
+            updateLiveDisplay();
+            
+            const icons = {
+                goal: '⚽',
+                assist: '🎯',
+                yellow_card: '🟨',
+                red_card: '🟥'
+            };
+            
+            showNotification(`${icons[eventType]} ${event.description}`, 'success');
+        }
+
+        function createEventDescription(eventType, teamKey) {
+            const teamName = currentMatch[teamKey].name;
+            const time = Utils.formatMatchTime(currentTime);
+            
+            const descriptions = {
+                goal: `But de ${teamName} (${time})`,
+                assist: `Passe décisive de ${teamName} (${time})`,
+                yellow_card: `Carton jaune pour ${teamName} (${time})`,
+                red_card: `Carton rouge pour ${teamName} (${time})`
+            };
+            
+            return descriptions[eventType] || `Événement ${eventType} (${time})`;
+        }
+
+        function updateStats(teamKey, eventType) {
+            if (eventType === 'goal') {
+                stats[teamKey].goals++;
+                currentMatch.score[teamKey]++;
+            } else if (eventType === 'assist') {
+                stats[teamKey].assists++;
+            } else if (eventType === 'yellow_card' || eventType === 'red_card') {
+                stats[teamKey].cards++;
+            }
+        }
+
+        function createEventHTML(event) {
+            const icons = {
+                goal: '⚽',
+                assist: '🎯',
+                yellow_card: '🟨',
+                red_card: '🟥'
+            };
+            
+            return `
+                <div class="timeline-event ${event.type}">
+                    <span class="event-time">${Utils.formatMatchTime(event.time)}</span>
+                    <span>${icons[event.type]} ${event.description}</span>
+                    <button onclick="removeEvent('${event.id}')" style="float: right; background: none; border: none; color: #e74c3c; cursor: pointer;">❌</button>
+                </div>
+            `;
+        }
+
+        function removeEvent(eventId) {
+            if (!confirm('Supprimer cet événement ?')) return;
+            
+            const eventIndex = events.findIndex(e => e.id === eventId);
+            if (eventIndex !== -1) {
+                const event = events[eventIndex];
+                
+                // Reverser les stats
+                if (event.type === 'goal') {
+                    stats[event.team].goals--;
+                    currentMatch.score[event.team]--;
+                } else if (event.type === 'assist') {
+                    stats[event.team].assists--;
+                } else if (event.type === 'yellow_card' || event.type === 'red_card') {
+                    stats[event.team].cards--;
+                }
+                
+                events.splice(eventIndex, 1);
+                updateLiveDisplay();
+                showNotification('Événement supprimé', 'success');
+            }
+        }
+
+        function updateLiveDisplay() {
+            // Mettre à jour le score
+            const scoreElement = document.getElementById('liveScore');
+            if (scoreElement && currentMatch) {
+                scoreElement.textContent = `${currentMatch.score.team1} - ${currentMatch.score.team2}`;
+            }
+            
+            // Mettre à jour la timeline
+            const timelineElement = document.getElementById('timelineEvents');
+            if (timelineElement) {
+                if (events.length === 0) {
+                    timelineElement.innerHTML = '<div style="text-align: center; padding: 40px; opacity: 0.7;">🕘 Aucun événement pour le moment</div>';
+                } else {
+                    timelineElement.innerHTML = events.map(event => createEventHTML(event)).join('');
+                }
+            }
+            
+            // Mettre à jour les stats dans les colonnes
+            showLiveMatch();
+        }
+
+        function showMatchSummary() {
+            const liveContent = document.getElementById('liveContent');
+            if (liveContent && currentMatch) {
+                const score = currentMatch.score;
+                
+                liveContent.innerHTML = `
+                    <div style="text-align: center; padding: 50px;">
+                        <h2>🏆 Match terminé !</h2>
+                        
+                        <div style="font-size: 2em; margin: 20px 0; padding: 20px; background: rgba(46, 204, 113, 0.2); border-radius: 12px;">
+                            ${currentMatch.team1.name} ${score.team1} - ${score.team2} ${currentMatch.team2.name}
+                        </div>
+                        
+                        <div style="margin: 20px 0;">
+                            <p>⏱️ Durée: ${Utils.formatMatchTime(currentTime)}</p>
+                            <p>📊 Total événements: ${events.length}</p>
+                        </div>
+                        
+                        <div style="margin-top: 30px;">
+                            <button class="btn btn-primary" onclick="showPage('home')">
+                                🏠 Retour à l'accueil
+                            </button>
+                            <button class="btn btn-secondary" onclick="startNewMatch()">
+                                ⚽ Nouveau match
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Fonctions de navigation
+        function startNewMatch() {
+            showPage('match');
+        }
+
+        function loadSavedMatches() {
+            const savedMatchesDiv = document.getElementById('savedMatches');
+            if (savedMatchesDiv) {
+                savedMatchesDiv.innerHTML = `
+                    <div style="text-align: center; margin: 30px 0; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 12px;">
+                        <h3>📁 Matchs sauvegardés</h3>
+                        <p style="opacity: 0.8;">Fonctionnalité de sauvegarde disponible dans la version complète.</p>
+                        ${currentMatch ? `
+                            <button class="btn btn-primary" onclick="showPage('live')" style="margin-top: 15px;">
+                                🔴 Retour au match en cours
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            }
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎉 Football Stats - Version simplifiée chargée !');
+            showNotification('⚽ Football Stats prêt !', 'success');
+            loadSavedMatches();
+        });
+    </script>
+</body>
+</html>
