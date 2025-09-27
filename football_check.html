@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vérification Installation Football Stats</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        
+        .check-section {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 12px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .check-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .check-item.success {
+            background: rgba(46, 204, 113, 0.2);
+            border-left: 3px solid #2ecc71;
+        }
+        
+        .check-item.error {
+            background: rgba(231, 76, 60, 0.2);
+            border-left: 3px solid #e74c3c;
+        }
+        
+        .check-item.warning {
+            background: rgba(243, 156, 18, 0.2);
+            border-left: 3px solid #f39c12;
+        }
+        
+        .check-icon {
+            font-size: 1.5em;
+            margin-right: 15px;
+            min-width: 30px;
+        }
+        
+        .check-details {
+            flex: 1;
+        }
+        
+        .check-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .check-description {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            margin: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+        }
+        
+        .summary {
+            text-align: center;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 12px;
+            font-size: 1.2em;
+        }
+        
+        .summary.success {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid rgba(46, 204, 113, 0.5);
+        }
+        
+        .summary.error {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.5);
+        }
+        
+        .summary.warning {
+            background: rgba(243, 156, 18, 0.2);
+            border: 1px solid rgba(243, 156, 18, 0.5);
+        }
+        
+        .actions {
+            text-align: center;
+            margin: 30px 0;
+        }
+        
+        .log {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            .check-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .check-icon {
+                margin: 0 0 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Vérification Installation</h1>
+        <p style="text-align: center; font-size: 1.2em;">Diagnostic automatique de votre installation Football Stats</p>
+        
+        <div class="actions">
+            <button class="btn" onclick="runFullCheck()">
+                🚀 Lancer la vérification complète
+            </button>
+            <button class="btn btn-secondary" onclick="runQuickCheck()">
+                ⚡ Vérification rapide
+            </button>
+            <button class="btn btn-warning" onclick="toggleLog()">
+                📋 Afficher les logs
+            </button>
+        </div>
+        
+        <div class="log" id="log"></div>
+        
+        <div id="summary" class="summary" style="display: none;"></div>
+        
+        <div class="check-section">
+            <h3>📁 Structure des fichiers</h3>
+            <div id="fileChecks"></div>
+        </div>
+        
+        <div class="check-section">
+            <h3>🌐 Environnement navigateur</h3>
+            <div id="browserChecks"></div>
+        </div>
+        
+        <div class="check-section">
+            <h3>⚙️ Fonctionnalités</h3>
+            <div id="featureChecks"></div>
+        </div>
+        
+        <div class="check-section">
+            <h3>📱 Compatibilité mobile</h3>
+            <div id="mobileChecks"></div>
+        </div>
+        
+        <div class="actions">
+            <button class="btn" onclick="openMainApp()" id="launchBtn" style="display: none;">
+                🚀 Lancer Football Stats
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        const checks = {
+            files: [
+                { name: 'index.html', path: './index.html', critical: true },
+                { name: 'base.css', path: './styles/base.css', critical: true },
+                { name: 'mobile.css', path: './styles/mobile.css', critical: false },
+                { name: 'live.css', path: './styles/live.css', critical: true },
+                { name: 'config.js', path: './js/config.js', critical: true },
+                { name: 'utils.js', path: './js/utils.js', critical: true },
+                { name: 'storage.js', path: './js/storage.js', critical: true },
+                { name: 'navigation.js', path: './js/navigation.js', critical: true },
+                { name: 'match.js', path: './js/match.js', critical: true },
+                { name: 'live.js', path: './js/live.js', critical: true },
+                { name: 'mobile.js', path: './js/mobile.js', critical: false },
+                { name: 'app.js', path: './js/app.js', critical: true }
+            ],
+            browser: [
+                { name: 'JavaScript activé', test: () => true },
+                { name: 'LocalStorage disponible', test: () => typeof(Storage) !== "undefined" },
+                { name: 'JSON supporté', test: () => typeof JSON !== "undefined" },
+                { name: 'ES6 supporté', test: () => {
+                    try { eval('const test = () => {}'); return true; } catch(e) { return false; }
+                }},
+                { name: 'Fetch API', test: () => typeof fetch !== "undefined" },
+                { name: 'Service Worker', test: () => 'serviceWorker' in navigator }
+            ],
+            features: [
+                { name: 'Stockage local', test: () => testLocalStorage() },
+                { name: 'Notifications', test: () => 'Notification' in window },
+                { name: 'Vibration', test: () => 'vibrate' in navigator },
+                { name: 'Partage natif', test: () => 'share' in navigator },
+                { name: 'Mode plein écran', test: () => document.fullscreenEnabled || document.webkitFullscreenEnabled },
+                { name: 'Géolocalisation', test: () => 'geolocation' in navigator }
+            ],
+            mobile: [
+                { name: 'Appareil mobile détecté', test: () => /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) },
+                { name: 'Écran tactile', test: () => 'ontouchstart' in window || navigator.maxTouchPoints > 0 },
+                { name: 'Orientation supportée', test: () => 'orientation' in screen },
+                { name: 'Viewport configuré', test: () => checkViewport() },
+                { name: 'PWA compatible', test: () => 'serviceWorker' in navigator && 'manifestJSON' in window }
+            ]
+        };
+        
+        let results = {
+            success: 0,
+            warning: 0,
+            error: 0,
+            total: 0
+        };
+        
+        function log(message) {
+            const logElement = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+        
+        function createCheckItem(name, description, status) {
+            const item = document.createElement('div');
+            item.className = `check-item ${status}`;
+            
+            const icons = {
+                success: '✅',
+                warning: '⚠️',
+                error: '❌'
+            };
+            
+            item.innerHTML = `
+                <div class="check-icon">${icons[status]}</div>
+                <div class="check-details">
+                    <div class="check-name">${name}</div>
+                    <div class="check-description">${description}</div>
+                </div>
+            `;
+            
+            return item;
+        }
+        
+        function runFullCheck() {
+            log('🚀 Démarrage de la vérification complète...');
+            resetResults();
+            
+            // Vérifier les fichiers
+            checkFiles();
+            
+            // Vérifier le navigateur
+            setTimeout(() => checkBrowser(), 500);
+            
+            // Vérifier les fonctionnalités
+            setTimeout(() => checkFeatures(), 1000);
+            
+            // Vérifier la compatibilité mobile
+            setTimeout(() => checkMobile(), 1500);
+            
+            // Afficher le résumé
+            setTimeout(() => showSummary(), 2000);
+        }
+        
+        function runQuickCheck() {
+            log('⚡ Vérification rapide...');
+            resetResults();
+            
+            checkBrowser();
+            checkFeatures();
+            
+            setTimeout(() => showSummary(), 500);
+        }
+        
+        function resetResults() {
+            results = { success: 0, warning: 0, error: 0, total: 0 };
+            
+            ['fileChecks', 'browserChecks', 'featureChecks', 'mobileChecks'].forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+            
+            document.getElementById('summary').style.display = 'none';
+            document.getElementById('launchBtn').style.display = 'none';
+        }
+        
+        function checkFiles() {
+            log('📁 Vérification des fichiers...');
+            const container = document.getElementById('fileChecks');
+            
+            checks.files.forEach(file => {
+                // Simulation de vérification de fichier
+                // En réalité, on ne peut pas vérifier l'existence des fichiers depuis le navigateur
+                // On suppose qu'ils existent pour le moment
+                const status = 'warning'; // Toujours warning car on ne peut pas vérifier
+                const description = file.critical ? 
+                    'Fichier critique - Vérifiez manuellement' : 
+                    'Fichier optionnel - Vérifiez manuellement';
+                
+                const item = createCheckItem(file.name, description, status);
+                container.appendChild(item);
+                
+                updateResults(status);
+                log(`📄 ${file.name}: ${status}`);
+            });
+        }
+        
+        function checkBrowser() {
+            log('🌐 Vérification du navigateur...');
+            const container = document.getElementById('browserChecks');
+            
+            checks.browser.forEach(check => {
+                const result = check.test();
+                const status = result ? 'success' : 'error';
+                const description = result ? 
+                    'Fonctionnalité supportée' : 
+                    'Fonctionnalité manquante ou non supportée';
+                
+                const item = createCheckItem(check.name, description, status);
+                container.appendChild(item);
+                
+                updateResults(status);
+                log(`🌐 ${check.name}: ${result ? 'OK' : 'ERREUR'}`);
+            });
+        }
+        
+        function checkFeatures() {
+            log('⚙️ Vérification des fonctionnalités...');
+            const container = document.getElementById('featureChecks');
+            
+            checks.features.forEach(check => {
+                const result = check.test();
+                const status = result ? 'success' : 'warning';
+                const description = result ? 
+                    'Fonctionnalité disponible' : 
+                    'Fonctionnalité non disponible (optionnelle)';
+                
+                const item = createCheckItem(check.name, description, status);
+                container.appendChild(item);
+                
+                updateResults(status);
+                log(`⚙️ ${check.name}: ${result ? 'OK' : 'INDISPONIBLE'}`);
+            });
+        }
+        
+        function checkMobile() {
+            log('📱 Vérification de la compatibilité mobile...');
+            const container = document.getElementById('mobileChecks');
+            
+            checks.mobile.forEach(check => {
+                const result = check.test();
+                const status = result ? 'success' : 'warning';
+                const description = result ? 
+                    'Compatible mobile' : 
+                    'Fonctionnalité mobile non détectée';
+                
+                const item = createCheckItem(check.name, description, status);
+                container.appendChild(item);
+                
+                updateResults(status);
+                log(`📱 ${check.name}: ${result ? 'OK' : 'NON DÉTECTÉ'}`);
+            });
+        }
+        
+        function updateResults(status) {
+            results[status]++;
+            results.total++;
+        }
+        
+        function showSummary() {
+            log('📊 Génération du résumé...');
+            const summary = document.getElementById('summary');
+            const launchBtn = document.getElementById('launchBtn');
+            
+            let summaryClass, summaryText;
+            
+            if (results.error === 0) {
+                summaryClass = 'success';
+                summaryText = `🎉 Installation parfaite ! ${results.success} vérifications réussies.`;
+                launchBtn.style.display = 'inline-block';
+            } else if (results.error <= 2) {
+                summaryClass = 'warning';
+                summaryText = `⚠️ Installation partielle. ${results.error} problèmes détectés.`;
+                launchBtn.style.display = 'inline-block';
+            } else {
+                summaryClass = 'error';
+                summaryText = `❌ Installation incomplète. ${results.error} erreurs critiques.`;
+            }
+            
+            summary.className = `summary ${summaryClass}`;
+            summary.innerHTML = `
+                <div>${summaryText}</div>
+                <div style="margin-top: 10px; font-size: 0.9em;">
+                    ✅ ${results.success} | ⚠️ ${results.warning} | ❌ ${results.error}
+                </div>
+            `;
+            summary.style.display = 'block';
+            
+            log(`📊 Résumé: ${results.success} succès, ${results.warning} avertissements, ${results.error} erreurs`);
+        }
+        
+        function testLocalStorage() {
+            try {
+                localStorage.setItem('test', 'test');
+                localStorage.removeItem('test');
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+        
+        function checkViewport() {
+            const viewport = document.querySelector('meta[name="viewport"]');
+            return viewport && viewport.content.includes('width=device-width');
+        }
+        
+        function toggleLog() {
+            const logElement = document.getElementById('log');
+            logElement.style.display = logElement.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function openMainApp() {
+            if (confirm('Ouvrir l\'application Football Stats dans un nouvel onglet ?')) {
+                window.open('./index.html', '_blank');
+            }
+        }
+        
+        // Informations système au chargement
+        window.addEventListener('load', () => {
+            log('🔍 Outil de vérification Football Stats chargé');
+            log(`📱 User Agent: ${navigator.userAgent}`);
+            log(`🖥️ Résolution: ${screen.width}x${screen.height}`);
+            log(`🌐 Langue: ${navigator.language}`);
+            log(`⏰ ${new Date().toLocaleString()}`);
+        });
+    </script>
+</body>
+</html>

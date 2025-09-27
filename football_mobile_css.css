@@ -1,0 +1,210 @@
+/* Styles optimisés pour mobile - Football Stats */
+
+/* Media queries pour mobile */
+@media (max-width: 768px) {
+    
+    /* Header mobile */
+    .header {
+        padding: 10px;
+    }
+    
+    .header h1 {
+        font-size: 1.8em;
+        margin-bottom: 10px;
+    }
+    
+    /* Navigation mobile */
+    .navigation {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 5px;
+        margin: 10px 0;
+    }
+    
+    .navigation .btn {
+        flex: 1;
+        padding: 10px 8px;
+        font-size: 12px;
+        min-width: auto;
+    }
+    
+    /* Container mobile */
+    .container {
+        padding: 10px;
+    }
+    
+    /* Cards mobile */
+    .welcome-card,
+    .match-setup-card,
+    .settings-card {
+        padding: 20px;
+        margin: 10px 0;
+        border-radius: 12px;
+    }
+    
+    /* Forms mobile */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 15px;
+        font-size: 16px; /* Évite le zoom sur iOS */
+        border-radius: 6px;
+    }
+    
+    /* Quick actions mobile */
+    .quick-actions {
+        flex-direction: column;
+        gap: 10px;
+        margin: 20px 0;
+    }
+    
+    .quick-actions .btn {
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+    }
+    
+    /* Notifications mobile */
+    .notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        transform: translateY(-100%);
+    }
+    
+    .notification.show {
+        transform: translateY(0);
+    }
+}
+
+/* Styles spécifiques pour très petits écrans */
+@media (max-width: 480px) {
+    
+    .header h1 {
+        font-size: 1.5em;
+    }
+    
+    .navigation .btn {
+        padding: 8px 6px;
+        font-size: 11px;
+    }
+    
+    .welcome-card,
+    .match-setup-card,
+    .settings-card {
+        padding: 15px;
+        border-radius: 8px;
+    }
+    
+    .card h2 {
+        font-size: 1.4em;
+    }
+}
+
+/* Optimisations tactiles */
+@media (pointer: coarse) {
+    
+    /* Augmenter la zone de touch */
+    .btn {
+        min-height: 44px;
+        padding: 12px 20px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        min-height: 44px;
+    }
+    
+    /* Éviter le zoom sur focus (iOS) */
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px;
+    }
+}
+
+/* Orientation paysage sur mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    
+    .header {
+        padding: 8px;
+    }
+    
+    .header h1 {
+        font-size: 1.6em;
+        margin-bottom: 8px;
+    }
+    
+    .navigation {
+        margin: 8px 0;
+    }
+    
+    .container {
+        padding: 8px;
+    }
+    
+    .welcome-card,
+    .match-setup-card,
+    .settings-card {
+        padding: 15px;
+        margin: 8px 0;
+    }
+}
+
+/* Dark mode support pour mobile */
+@media (prefers-color-scheme: dark) {
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        background: rgba(0,0,0,0.3);
+        border-color: rgba(255,255,255,0.3);
+    }
+    
+    .welcome-card,
+    .match-setup-card,
+    .settings-card {
+        background: rgba(0,0,0,0.2);
+        border-color: rgba(255,255,255,0.1);
+    }
+}
+
+/* Améliorations de performance mobile */
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+input, textarea, select {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+/* Smooth scrolling sur mobile */
+body {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+}
+
+/* Éviter le scroll horizontal */
+.container {
+    overflow-x: hidden;
+}
+
+/* Optimisation des animations sur mobile */
+@media (prefers-reduced-motion: reduce) {
+    
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

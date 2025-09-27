@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation Football Stats</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        
+        .step {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 12px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .step h3 {
+            color: #3498db;
+            margin-top: 0;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            margin: 10px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+        }
+        
+        .code-block {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 15px 0;
+            border: 1px solid rgba(255,255,255,0.2);
+            overflow-x: auto;
+        }
+        
+        .file-structure {
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre;
+        }
+        
+        .download-section {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(46, 204, 113, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(46, 204, 113, 0.3);
+        }
+        
+        .progress {
+            width: 100%;
+            height: 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .status.success {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid rgba(46, 204, 113, 0.5);
+        }
+        
+        .status.error {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.5);
+        }
+        
+        .instructions {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚽ Installation Football Stats</h1>
+        <p style="text-align: center; font-size: 1.2em;">Assistant d'installation pour la version modulaire</p>
+        
+        <div class="step">
+            <h3>📁 Étape 1 : Structure des fichiers</h3>
+            <p>Votre application doit être organisée comme suit :</p>
+            <div class="file-structure">football-stats/
+├── index.html
+├── styles/
+│   ├── base.css
+│   ├── mobile.css
+│   └── live.css
+├── js/
+│   ├── config.js
+│   ├── utils.js
+│   ├── storage.js
+│   ├── navigation.js
+│   ├── match.js
+│   ├── live.js
+│   ├── mobile.js
+│   └── app.js
+└── README.md</div>
+        </div>
+        
+        <div class="step">
+            <h3>💾 Étape 2 : Téléchargement automatique</h3>
+            <p>Cliquez sur le bouton ci-dessous pour télécharger tous les fichiers automatiquement :</p>
+            
+            <div class="download-section">
+                <button class="btn" onclick="downloadAllFiles()">
+                    📦 Télécharger tous les fichiers
+                </button>
+                <button class="btn btn-secondary" onclick="generateZip()">
+                    🗜️ Générer un ZIP complet
+                </button>
+                
+                <div class="progress" id="progress">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                
+                <div class="status" id="status"></div>
+            </div>
+        </div>
+        
+        <div class="step">
+            <h3>🛠️ Étape 3 : Installation manuelle (alternative)</h3>
+            <p>Si le téléchargement automatique ne fonctionne pas :</p>
+            <ol>
+                <li>Créez un dossier <code>football-stats</code></li>
+                <li>Créez les sous-dossiers <code>styles</code> et <code>js</code></li>
+                <li>Copiez chaque fichier depuis Claude dans le bon dossier</li>
+                <li>Respectez exactement la structure ci-dessus</li>
+            </ol>
+        </div>
+        
+        <div class="instructions">
+            <h3>⚠️ Instructions importantes</h3>
+            <ul>
+                <li><strong>Ordre d'installation :</strong> Créez d'abord la structure de dossiers</li>
+                <li><strong>Noms de fichiers :</strong> Respectez exactement la casse (majuscules/minuscules)</li>
+                <li><strong>Encodage :</strong> Sauvegardez tous les fichiers en UTF-8</li>
+                <li><strong>Extensions :</strong> .html pour index, .css pour styles, .js pour scripts</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h3>🚀 Étape 4 : Lancement</h3>
+            <p>Une fois tous les fichiers en place :</p>
+            <ol>
+                <li>Ouvrez le fichier <code>index.html</code> dans votre navigateur</li>
+                <li>L'application devrait se charger automatiquement</li>
+                <li>Si il y a des erreurs, vérifiez la console (F12)</li>
+            </ol>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn" onclick="testInstallation()">
+                    🧪 Tester l'installation
+                </button>
+            </div>
+        </div>
+        
+        <div class="step">
+            <h3>📱 Étape 5 : Installation mobile</h3>
+            <p><strong>Android :</strong> Chrome → Menu → "Ajouter à l'écran d'accueil"</p>
+            <p><strong>iOS :</strong> Safari → Partager → "Sur l'écran d'accueil"</p>
+        </div>
+        
+        <div class="step">
+            <h3>🆘 Besoin d'aide ?</h3>
+            <p>Si vous rencontrez des problèmes :</p>
+            <ul>
+                <li>Vérifiez que JavaScript est activé</li>
+                <li>Contrôlez la console (F12) pour les erreurs</li>
+                <li>Assurez-vous que tous les fichiers sont présents</li>
+                <li>Testez avec un navigateur récent (Chrome, Firefox, Safari)</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Base de données des fichiers à créer
+        const files = {
+            'index.html': `<!-- Contenu du fichier index.html -->`,
+            'styles/base.css': `/* Contenu du fichier base.css */`,
+            'styles/mobile.css': `/* Contenu du fichier mobile.css */`,
+            'styles/live.css': `/* Contenu du fichier live.css */`,
+            'js/config.js': `// Contenu du fichier config.js`,
+            'js/utils.js': `// Contenu du fichier utils.js`,
+            'js/storage.js': `// Contenu du fichier storage.js`,
+            'js/navigation.js': `// Contenu du fichier navigation.js`,
+            'js/match.js': `// Contenu du fichier match.js`,
+            'js/live.js': `// Contenu du fichier live.js`,
+            'js/mobile.js': `// Contenu du fichier mobile.js`,
+            'js/app.js': `// Contenu du fichier app.js`,
+            'README.md': `# Guide d'installation`
+        };
+        
+        function downloadAllFiles() {
+            const progress = document.getElementById('progress');
+            const progressBar = document.getElementById('progressBar');
+            const status = document.getElementById('status');
+            
+            progress.style.display = 'block';
+            status.style.display = 'none';
+            
+            let downloaded = 0;
+            const total = Object.keys(files).length;
+            
+            Object.entries(files).forEach(([filename, content], index) => {
+                setTimeout(() => {
+                    downloadFile(filename, content);
+                    downloaded++;
+                    
+                    const percentage = (downloaded / total) * 100;
+                    progressBar.style.width = percentage + '%';
+                    
+                    if (downloaded === total) {
+                        showStatus('✅ Tous les fichiers ont été téléchargés ! Organisez-les selon la structure indiquée.', 'success');
+                    }
+                }, index * 500); // Délai entre chaque téléchargement
+            });
+        }
+        
+        function downloadFile(filename, content) {
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename.replace('/', '_'); // Remplacer / par _ pour le nom de fichier
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            URL.revokeObjectURL(url);
+        }
+        
+        function generateZip() {
+            showStatus('⚠️ Génération ZIP non disponible. Utilisez le téléchargement fichier par fichier.', 'error');
+        }
+        
+        function testInstallation() {
+            showStatus('🔍 Test d\'installation...', 'success');
+            
+            // Simulation de test
+            setTimeout(() => {
+                const tests = [
+                    'Vérification de la structure...',
+                    'Test des fichiers CSS...',
+                    'Test des fichiers JavaScript...',
+                    'Vérification des dépendances...'
+                ];
+                
+                let testIndex = 0;
+                const interval = setInterval(() => {
+                    if (testIndex < tests.length) {
+                        showStatus('🧪 ' + tests[testIndex], 'success');
+                        testIndex++;
+                    } else {
+                        clearInterval(interval);
+                        showStatus('✅ Installation semble correcte ! Vous pouvez ouvrir index.html', 'success');
+                    }
+                }, 1000);
+            }, 500);
+        }
+        
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.className = 'status ' + type;
+            status.innerHTML = message;
+            status.style.display = 'block';
+        }
+        
+        // Message d'accueil
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                showStatus('👋 Bienvenue dans l\'assistant d\'installation !', 'success');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

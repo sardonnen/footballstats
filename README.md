@@ -1,2 +1,1 @@
-# footballstats
-suivi stats match
+# Guide d'installation
